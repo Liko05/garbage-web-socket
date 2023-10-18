@@ -25,15 +25,17 @@ func chatEndpoint(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	fmt.Println("Client connected from ip: " + r.RemoteAddr)
+	ipWithoutPort := strings.Split(r.RemoteAddr, ":")[0]
 
-	if blacklist[r.RemoteAddr] {
-		println("Blacklisted ip: " + r.RemoteAddr + " tried to connect")
+	fmt.Println("Client connected from ip: " + ipWithoutPort)
+
+	if blacklist[ipWithoutPort] {
+		println("Blacklisted ip: " + ipWithoutPort + " tried to connect")
 		ws.Close()
 		return
 	}
 
-	clients[ws] = client{users, r.RemoteAddr}
+	clients[ws] = client{users, ipWithoutPort}
 	users++
 
 	println(clients[ws].id)
